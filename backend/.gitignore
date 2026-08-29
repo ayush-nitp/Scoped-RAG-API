@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Secrets (Sabse Important 🚨)
+.env
+
+# Uploaded PDFs ka kachra
+uploads/*
+!uploads/.gitkeep
+
+# System files
+.DS_Store

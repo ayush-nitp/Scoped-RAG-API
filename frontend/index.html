@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG PDF Uploader</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 50px; background-color: #1e1e1e; color: white; }
+        .container { max-width: 500px; background: #2d2d2d; padding: 20px; border-radius: 8px; }
+        button { margin-top: 15px; padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #responseMessage { margin-top: 20px; color: #4caf50; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Upload PDF for RAG</h2>
+    
+    <!-- HTML Form -->
+    <input type="file" id="pdfInput" accept="application/pdf">
+    <br>
+    <button onclick="uploadFile()">Upload File</button>
+
+    <div id="responseMessage"></div>
+</div>
+
+<script>
+    async function uploadFile() {
+        const fileInput = document.getElementById('pdfInput');
+        const messageDiv = document.getElementById('responseMessage');
+
+        if (fileInput.files.length === 0) {
+            messageDiv.innerHTML = "<span style='color:red;'>Please select a file first!</span>";
+            return;
+        }
+
+        const file = fileInput.files[0];
+        
+        // Form Data prepare kar rahe hain (Thunder Client wala same kaam)
+        const formData = new FormData();
+        formData.append('pdfDocument', file); // 'pdfDocument' wahi name hai jo backend mein hai
+
+        messageDiv.innerHTML = "Uploading...";
+
+        try {
+            // Backend ko request bhej rahe hain
+            const response = await fetch('http://localhost:5000/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                messageDiv.innerHTML = "Success! File saved at: " + data.filePath;
+            } else {
+                messageDiv.innerHTML = "<span style='color:red;'>Error: " + data.error + "</span>";
+            }
+        } catch (error) {
+            messageDiv.innerHTML = "<span style='color:red;'>Connection Error. Is backend running?</span>";
+        }
+    }
+</script>
+
+</body>
+</html>
